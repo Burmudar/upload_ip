@@ -30,8 +30,6 @@ def create_file(service, body):
     try:
         content = http.MediaIoBaseUpload(io.StringIO(body), mimetype=MIME_TYPE, chunksize=-1,resumable=False)
         results = service.files().create(body={'name': FILE_NAME, 'title': 'IP Address', 'description': 'IP Address of PI'}, media_body=content).execute()
-        import pprint
-        pprint.pprint(results)
     except errors.HttpError as e:
         try:
             # Load Json body.
@@ -48,8 +46,6 @@ def update_file(service, id, body):
     try:
         content = http.MediaIoBaseUpload(io.StringIO(body), mimetype=MIME_TYPE, chunksize=-1,resumable=False)
         results = service.files().update(fileId=id, media_body=content).execute()
-        import pprint
-        pprint.pprint(results)
     except errors.HttpError as e:
         try:
             # Load Json body.
@@ -107,10 +103,10 @@ def main():
     content = json.dumps({'ip': ip, 'timestamp': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%s")}, indent=4)
     file_id = find_first_file_id(service, FILE_NAME)
     if file_id is None:
-        print("pi-ip.txt file not found! Creating it")
+        print("No {} file exists. Creating file with content: {}".format(FILE_NAME, content))
         create_file(service, content)
     else:
-        print("pi-ip file found! Updating with content: {0}".format(content))
+        print("Updating {} file content: {}".format(FILE_NAME, content))
         update_file(service, file_id, content)
 
 if __name__ == '__main__':
